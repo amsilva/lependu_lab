@@ -4,19 +4,35 @@ def show(alvo, letras_usadas) :
       print(letra, end = " ")
     else :
       print("_", end = " ")
-  print()
+
   print()
 
+
+
+
+
+## main
 
 perdeu = False
+fase = 0
+pontos_total = 0
 
 while not perdeu :
 
-  alvo = "BOLA"
+
+  fase = fase + 1 
   erros = 0
   acertos = 0
   acertou = False
   usadas = []
+  alvo = "BALA"
+  S = len(alvo) #Size da palavra alvo
+  D = 1 #dificuldade da palavra alvo
+  N = len(set(alvo)) #diff de letras do alvo
+  #E #quantidade de erros
+  #C #combo de acertos consecutivos  
+
+  print("\n*** FASE:", fase)
 
   while not acertou and erros < 6 :
 
@@ -31,18 +47,23 @@ while not perdeu :
       usadas.append(letra)
 
       if letra in alvo :
-        print("\nA letra existe\n")
-        acertos = acertos + 1
+        print("\nLetra existente\n")
+        acertos = acertos + alvo.count(letra)
+        print(acertos)
         if acertos == len(alvo) :
           acertou = True
       else :
         erros = erros + 1
-        print("\nA letra não existe!\n")
+        print("\nErro! Letra não existente!\n")
   
   if acertou :
-    print("Parabéns! Você acertou a palavra", alvo)
+    E = 6 - erros #assertividade
+    pontos_acerto = (S + D) * (N +E)
+    pontos_total += pontos_acerto
+    print("Parabéns! Você acertou a palavra", alvo, "com", pontos_acerto, "pontos!")
   else :
     print("Você perdeu, a palavra era", alvo)
+    print("Pontuação total =", pontos_total)
     perdeu = True
 
 
