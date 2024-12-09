@@ -3,7 +3,8 @@ import requests
 
 def nova_palavra():
 
-  endpoint = "https://faccamp.pythonanywhere.com/hangman-api/getword"
+  #endpoint = "https://faccamp.pythonanywhere.com/hangman-api/getword"
+  endpoint = "https://faccamp.pythonanywhere.com/hangman-api/getdata"
 
   try:
     resposta = requests.get(endpoint)
@@ -45,18 +46,29 @@ while not perdeu :
   acertos = 0
   acertou = False
   usadas = []
-  alvo = "GOIABA"
+  #alvo = "GOIABA"
+  dadojson = nova_palavra()
+  print(dadojson)
+  alvo = dadojson["palavra"]
+  dica2 = dadojson["categoria"]
+
   S = len(alvo) #Size da palavra alvo
   D = 1 #dificuldade da palavra alvo
   N = len(set(alvo)) #diff de letras do alvo
   #E #quantidade de erros
   #C #combo de acertos consecutivos  
 
-  print("\n*** FASE:", fase)
+  print(f"\nFASE: {fase} [", end='')
+  barra = '*' * fase
+  print(f"{barra}]")
 
   while not acertou and erros < 6 :
 
     print("Você tem", 6 - erros, "tentativas: ", end=" ")
+
+    if erros > 2 : 
+           print(f"({dica2})", end=" ")
+
     show(alvo,usadas)
     letra = input("Digite uma letra: ").upper()
 
@@ -84,7 +96,6 @@ while not perdeu :
   
   if acertou :
     E = 6 - erros #assertividade
-    print("* combo = ", mcombo)
     C = mcombo
     pontos_acerto = (S + D) * (N +E) + C
     pontos_total += pontos_acerto
