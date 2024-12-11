@@ -1,4 +1,5 @@
 import requests
+import csv
 
 
 def nova_palavra():
@@ -27,6 +28,31 @@ def show(alvo, letras_usadas) :
 
 
 
+global nome_arquivo
+nome_arquivo = 'rec5.csv'
+
+# recupera dados do arquivo em json
+def ler_arquivo():
+    dados = []
+
+    try :
+      with open(nome_arquivo, mode='r') as file:
+        buffer = csv.reader(file)
+        for linha in buffer:
+            id = linha[0]
+            pontos = int(linha[1])
+            dados.append({'id': id, 'pontos': pontos})
+    except FileNotFoundError:
+      return []
+
+    return dados
+
+# salvar o arquivo de recordes
+def salvar_arquivo(dados):
+    with open(nome_arquivo, mode='w', newline='') as file:
+        escritor = csv.writer(file)
+        for item in dados:
+            escritor.writerow([item['id'], item['pontos']])
 
 
 
@@ -48,12 +74,14 @@ while not perdeu :
   usadas = []
   #alvo = "GOIABA"
   dadojson = nova_palavra()
-  print(dadojson)
+  #print(dadojson)
+  #alvo = 'POP'
   alvo = dadojson["palavra"]
   dica2 = dadojson["categoria"]
+  #complexidade = dadojson["complexidade"]  
 
   S = len(alvo) #Size da palavra alvo
-  D = 1 #dificuldade da palavra alvo
+  D = 1 #(complexidade) dificuldade da palavra alvo
   N = len(set(alvo)) #diff de letras do alvo
   #E #quantidade de erros
   #C #combo de acertos consecutivos  
@@ -73,7 +101,7 @@ while not perdeu :
     letra = input("Digite uma letra: ").upper()
 
     if letra in usadas :
-        print("Letra repetida!")
+        print("\nLetra repetida!")
     else :
   
         usadas.append(letra)
@@ -92,7 +120,6 @@ while not perdeu :
 
         if combo > mcombo : 
             mcombo = combo
-
   
   if acertou :
     E = 6 - erros #assertividade
@@ -105,7 +132,27 @@ while not perdeu :
     print("Pontuação total =", pontos_total)
     perdeu = True
 
-
-
 print("GAME OVER!")
 
+# manipulando os recordes
+recordes = ler_arquivo()
+
+ultimo = recordes[4] #ultima posicao do top-5
+#print("ultimo = ", ultimo)
+#rint("ultimo ponto = ", ultimo['pontos'])
+
+if pontos_total > ultimo['pontos'] :
+
+    print("\n** Parabéns! Sua pontuação entra no Top-5 List")
+    ident = input("SUA IDENTIFICAÇÃO: ").upper()
+    novo = {"id":ident, "pontos":pontos_total}
+    recordes.append(novo)
+    recordes = sorted(recordes, key=lambda filtro: filtro["pontos"], reverse=True)
+    recordes.pop()
+
+salvar_arquivo(recordes)
+
+print("\n*** Recordes Top-5 ***")
+
+for item in recordes :
+    print(f"{item['id']} - {item['pontos']}")
